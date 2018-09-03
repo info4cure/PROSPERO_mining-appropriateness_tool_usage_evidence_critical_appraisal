@@ -1,0 +1,173 @@
+sort,unique_continent,Topics_general,observation,value,id,,,,,count,,,,,,,,,,,,,,,,,,,
+143,South Asia and Oceania,Psychiatry,value 5,186,5,,Europe,Psychiatry,value 4,642,4,,Asia,Psychiatry,value 3,140,3,,America,Psychiatry,value 2,374,2,,Africa,Psychiatry,value 1,25,1
+144,South Asia and Oceania,Cancer,value 5,111,5,,Europe,Cancer,value 4,472,4,,Asia,Cancer,value 3,367,3,,America,Cancer,value 2,351,2,,Africa,Cancer,value 1,29,1
+145,South Asia and Oceania,Others,value 5,197,5,,Europe,Others,value 4,433,4,,Asia,Others,value 3,61,3,,America,Others,value 2,361,2,,Africa,Others,value 1,39,1
+,South Asia and Oceania,Cardiovascular,value 5,154,5,,Europe,Cardiovascular,value 4,431,4,,Asia,Cardiovascular,value 3,263,3,,America,Cardiovascular,value 2,395,2,,Africa,Cardiovascular,value 1,18,1
+146,South Asia and Oceania,Health care,value 5,138,5,,Europe,Health care,value 4,350,4,,Asia,Health care,value 3,57,3,,America,Health care,value 2,240,2,,Africa,Health care,value 1,18,1
+147,South Asia and Oceania,Neurology,value 5,119,5,,Europe,Neurology,value 4,322,4,,Asia,Neurology,value 3,102,3,,America,Neurology,value 2,201,2,,Africa,Neurology,value 1,16,1
+148,South Asia and Oceania,Endocrine disorders,value 5,170,5,,Europe,Endocrine disorders,value 4,307,4,,Asia,Endocrine disorders,value 3,186,3,,America,Endocrine disorders,value 2,260,2,,Africa,Endocrine disorders,value 1,18,1
+149,South Asia and Oceania,Traumatology,value 5,136,5,,Europe,Traumatology,value 4,291,4,,Asia,Traumatology,value 3,89,3,,America,Traumatology,value 2,258,2,,Africa,Traumatology,value 1,11,1
+150,South Asia and Oceania,Infectious diseases,value 5,109,5,,Europe,Infectious diseases,value 4,285,4,,Asia,Infectious diseases,value 3,120,3,,America,Infectious diseases,value 2,282,2,,Africa,Infectious diseases,value 1,94,1
+151,South Asia and Oceania,Pediatrics,value 5,99,5,,Europe,Pediatrics,value 4,231,4,,Asia,Pediatrics,value 3,74,3,,America,Pediatrics,value 2,235,2,,Africa,Pediatrics,value 1,27,1
+152,South Asia and Oceania,Surgery,value 5,33,5,,Europe,Surgery,value 4,211,4,,Asia,Surgery,value 3,68,3,,America,Surgery,value 2,180,2,,Africa,Surgery,value 1,6,1
+153,South Asia and Oceania,Odontology,value 5,25,5,,Europe,Odontology,value 4,195,4,,Asia,Odontology,value 3,99,3,,America,Odontology,value 2,354,2,,Africa,Odontology,value 1,52,1
+154,South Asia and Oceania,Rheumatology,value 5,42,5,,Europe,Rheumatology,value 4,180,4,,Asia,Rheumatology,value 3,66,3,,America,Rheumatology,value 2,123,2,,Africa,Rheumatology,value 1,12,1
+155,South Asia and Oceania,Obstetrics,value 5,37,5,,Europe,Obstetrics,value 4,146,4,,Asia,Obstetrics,value 3,43,3,,America,Obstetrics,value 2,109,2,,Africa,Obstetrics,value 1,14,1
+156,South Asia and Oceania,Neumology,value 5,38,5,,Europe,Neumology,value 4,127,4,,Asia,Neumology,value 3,97,3,,America,Neumology,value 2,106,2,,Africa,Neumology,value 1,4,1
+157,South Asia and Oceania,Pharmacology,value 5,38,5,,Europe,Pharmacology,value 4,123,4,,Asia,Pharmacology,value 3,72,3,,America,Pharmacology,value 2,112,2,,Africa,Pharmacology,value 1,8,1
+158,South Asia and Oceania,Pain,value 5,60,5,,Europe,Pain,value 4,121,4,,Asia,Pain,value 3,22,3,,America,Pain,value 2,86,2,,Africa,Pain,value 1,12,1
+159,South Asia and Oceania,Gastroenterology,value 5,27,5,,Europe,Gastroenterology,value 4,100,4,,Asia,Gastroenterology,value 3,46,3,,America,Gastroenterology,value 2,88,2,,Africa,Gastroenterology,value 1,14,1
+160,South Asia and Oceania,Gynecology,value 5,19,5,,Europe,Gynecology,value 4,77,4,,Asia,Gynecology,value 3,62,3,,America,Gynecology,value 2,71,2,,Africa,Gynecology,value 1,5,1
+161,South Asia and Oceania,Nephrology,value 5,27,5,,Europe,Nephrology,value 4,64,4,,Asia,Nephrology,value 3,65,3,,America,Nephrology,value 2,84,2,,Africa,Nephrology,value 1,4,1
+162,South Asia and Oceania,Immunology,value 5,16,5,,Europe,Immunology,value 4,55,4,,Asia,Immunology,value 3,35,3,,America,Immunology,value 2,38,2,,Africa,Immunology,value 1,3,1
+163,South Asia and Oceania,Hepatology,value 5,12,5,,Europe,Hepatology,value 4,52,4,,Asia,Hepatology,value 3,29,3,,America,Hepatology,value 2,34,2,,Africa,Hepatology,value 1,4,1
+164,South Asia and Oceania,Dermatology,value 5,20,5,,Europe,Dermatology,value 4,51,4,,Asia,Dermatology,value 3,22,3,,America,Dermatology,value 2,48,2,,Africa,Dermatology,value 1,2,1
+165,South Asia and Oceania,Transplant,value 5,5,5,,Europe,Transplant,value 4,45,4,,Asia,Transplant,value 3,13,3,,America,Transplant,value 2,39,2,,Africa,Transplant,value 1,1,1
+166,South Asia and Oceania,Urology,value 5,10,5,,Europe,Urology,value 4,41,4,,Asia,Urology,value 3,34,3,,America,Urology,value 2,23,2,,Africa,Urology,value 1,0,1
+167,South Asia and Oceania,Hematology,value 5,9,5,,Europe,Hematology,value 4,36,4,,Asia,Hematology,value 3,11,3,,America,Hematology,value 2,45,2,,Africa,Hematology,value 1,4,1
+142,South Asia and Oceania,Alternative medicine,value 5,20,5,,Europe,Alternative medicine,value 4,31,4,,Asia,Alternative medicine,value 3,215,3,,America,Alternative medicine,value 2,35,2,,Africa,Alternative medicine,value 1,0,1
+168,South Asia and Oceania,Genetic disorders,value 5,15,5,,Europe,Genetic disorders,value 4,31,4,,Asia,Genetic disorders,value 3,17,3,,America,Genetic disorders,value 2,21,2,,Africa,Genetic disorders,value 1,4,1
+169,South Asia and Oceania,Otorhinolaryngology,value 5,4,5,,Europe,Otorhinolaryngology,value 4,31,4,,Asia,Otorhinolaryngology,value 3,5,3,,America,Otorhinolaryngology,value 2,19,2,,Africa,Otorhinolaryngology,value 1,3,1
+170,South Asia and Oceania,Sleep disorders,value 5,20,5,,Europe,Sleep disorders,value 4,28,4,,Asia,Sleep disorders,value 3,28,3,,America,Sleep disorders,value 2,51,2,,Africa,Sleep disorders,value 1,4,1
+171,South Asia and Oceania,Ophtalmology,value 5,11,5,,Europe,Ophtalmology,value 4,26,4,,Asia,Ophtalmology,value 3,31,3,,America,Ophtalmology,value 2,22,2,,Africa,Ophtalmology,value 1,0,1
+172,South Asia and Oceania,Chronic diseases and comorbidity,value 5,8,5,,Europe,Chronic diseases and comorbidity,value 4,21,4,,Asia,Chronic diseases and comorbidity,value 3,1,3,,America,Chronic diseases and comorbidity,value 2,14,2,,Africa,Chronic diseases and comorbidity,value 1,1,1
+173,South Asia and Oceania,Physiotherapy,value 5,21,5,,Europe,Physiotherapy,value 4,21,4,,Asia,Physiotherapy,value 3,1,3,,America,Physiotherapy,value 2,9,2,,Africa,Physiotherapy,value 1,1,1
+174,South Asia and Oceania,Drugs,value 5,3,5,,Europe,Drugs,value 4,13,4,,Asia,Drugs,value 3,1,3,,America,Drugs,value 2,10,2,,Africa,Drugs,value 1,0,1
+175,South Asia and Oceania,Congenital malformations,value 5,0,5,,Europe,Congenital malformations,value 4,2,4,,Asia,Congenital malformations,value 3,3,3,,America,Congenital malformations,value 2,3,2,,Africa,Congenital malformations,value 1,0,1
+108,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+109,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+110,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+106,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+111,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+112,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+113,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+114,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+115,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+116,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+117,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+118,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+119,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+120,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+121,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+122,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+123,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+124,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+125,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+126,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+127,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+128,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+129,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+130,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+131,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+132,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+133,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+134,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+135,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+136,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+137,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+138,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+139,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+140,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+72,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+73,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+74,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+75,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+71,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+76,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+77,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+78,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+79,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+80,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+81,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+82,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+83,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+84,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+85,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+86,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+87,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+88,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+89,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+90,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+91,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+92,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+93,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+94,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+95,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+96,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+97,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+98,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+99,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+100,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+101,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+102,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+103,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+104,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+105,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+37,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+38,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+39,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+40,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+36,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+41,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+42,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+43,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+44,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+45,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+46,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+47,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+48,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+49,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+50,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+51,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+52,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+53,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+54,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+55,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+56,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+57,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+58,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+59,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+60,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+61,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+62,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+63,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+64,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+65,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+66,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+67,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+68,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+69,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+70,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+12,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+13,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+15,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+16,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+17,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+18,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+19,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+20,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+21,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+22,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+23,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+24,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+25,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+26,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+27,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+28,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+29,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+30,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+31,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+32,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+33,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+34,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+35,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

@@ -1,0 +1,749 @@
+---
+title: "Appropriateness of tool usage for evidence critical appraisal: A meta-epidemiological study of 20,000 PROSPERO records of non-Cochrane systematic reviews"
+output: html_notebook
+  
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+### packages ----------
+library("tidyverse")
+library("stringr")
+```
+
+```{r}
+#### datasets ----------
+### dataset con las RoB tools usada en los protocols
+dataset_raw<-read.csv(file="Prospero_Final File.csv", sep=";")
+
+### dataset del articulo primero de PROSPERO
+dataset_PROSPERO_first<-read.csv2("protocol_dataset_curated_17JUN2018.csv", sep=";")
+dataset_PROSPERO_first<-dataset_PROSPERO_first[,c(2,3,7:14,16)]
+
+###  merge dataset_raw + dataset_first BY CRDs
+all_dataset_prospero2<-merge(dataset_raw, dataset_PROSPERO_first, by.x="crds", by.y="CDR_PROSPERO_records", all.y=TRUE, all.x=TRUE)
+
+### final variable selection  
+dataset_PROSPERO2_final<-all_dataset_prospero2[,c(1,6,9:61, 85:93)]
+lapply(dataset_PROSPERO2_final[,c(5:55)], levels)
+fct_collapse(dataset_PROSPERO2_final$BMJ.checklist, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$CASP, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$CHEC.list, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$CHEERS, 'Yes' = c('YES', 'yes')) 
+
+
+
+fct_collapse(dataset_PROSPERO2_final$CMS.MCMS, 'Yes' = c('YES ', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$COCHRANE.RISK.OF.BIAS, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$CONSORT, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$COREQ, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$COSMIN.CHECLIST, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$Downs.and.Black, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$Drummond.checklist, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$EPHPP, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$GRADE, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$ISPOR, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$JADAD, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$JBI, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$MCMASTER, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$MERSQI, 'Yes' = c('YES ', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$MINORS, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$NEWCASTLE.OTTAWA, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$OCEBM.CEBM, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$OQAQ, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$PEDRO.SCALE, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$Phillips.checklist, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$PRISMA, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$QUADAS.QUADAS.2, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$RE.AIM, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$REBIP, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$RoBANS, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$SIGN...SIGN.50, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$STARD, 'Yes' = c('YES', 'yes')) 
+fct_collapse(dataset_PROSPERO2_final$STROBE, 'Yes' = c('YES', 'yes')) 
+
+attach(dataset_PROSPERO2_final)
+
+dataset_PROSPERO2_final <- dataset_PROSPERO2_final %>%
+  mutate(AMSTAR = fct_recode(AMSTAR, 
+                             "Yes" = "YES",
+                             "Yes" = "Yes",
+                             "Yes" = "yes",
+                             "No" = ""))
+var<-names(dataset_PROSPERO2_final[,c(5:55)])
+variables<-unlist(var)
+dataset_PROSPERO2_final %>% mutate_at(.vars = #vars(dataset_PROSPERO2_final[,c(5:55)]), 
+                                        as.character(variables),
+                                      .funs=forcats::fct_recode,
+                                      "Yes" = "YES",
+                                      "Yes" = "Yes",
+                                      "Yes" = "yes",
+                                      "No" = "")
+
+levels(dataset_PROSPERO2_final$BMJ.checklist)
+
+
+#######  simplificarniveles de topic a una más general
+dataset_PROSPERO2_final<-dataset_PROSPERO2_final %>% 
+  mutate(Topic_gral=recode(Topic, c("cancer" = "Cancer")))
+```
+
+
+```{r}
+####  extraer CRDs del campo Citation con regex
+
+prosperoID<-"[C][R][D]([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9])"
+dataset_raw$crds<-str_extract(dataset_raw$Citation, prosperoID)
+
+```
+
+
+```{r}
+curated_dataset<-read.csv2(file="dataset_PROSPERO2_final.csv")
+curated_dataset_min<-curated_dataset[,c(2,4,5:10,161:171)]
+tools<-read.csv2(file="crd_appraisal_tools.csv")
+curated_dataset_and_tools<-merge(tools, curated_dataset_min, by.x="crds", by.y="crds", all.x=TRUE)
+```
+
+```{r}
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No")
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(3:6,13,14,21)]),aes(x=Topics_general,y=tool, color=measure)) + 
+  geom_count(aes(x=Topics_general,y=tool, color=measure))+
+  coord_flip()+
+  theme(axis.text.y=element_text(size=4))+
+  #facet_wrap(~unique_continent)+
+  theme(legend.position="none")
+```
+
+```{r}
+
+table_topics <- as.data.frame(table(curated_dataset_and_tools$Topics_general))
+table_topics$Freq <- c(scale(table_topics$Freq))
+curated_dataset_and_tools<-merge(curated_dataset_and_tools, table_topics, by.x="Topics_general", by.y = "Var1", all.x = TRUE)
+colnames(curated_dataset_and_tools)[which(colnames(curated_dataset_and_tools) == 'Freq')] <- 'Freq_topics'
+
+
+
+curated_dataset_and_tools <- curated_dataset_and_tools %>% 
+  mutate(new_unitofanalysis = forcats::fct_recode(unitofanalysis, 
+            'RCTs' = "RCTs", 'Non-RCTs and Observational Studies' = "Non-RCTs and Observational studies", 'Non-RCTs and Observational Studies' = "Non-RCTs or Observational Studies",
+            'RCTs and Observational Studies' = "RCTs and observational studies",
+            'RCTs and Observational Studies' = "RCTs and Observational studies", 
+            #'Public Health Research' = "Quantitative Research (Public Health Research)", 
+            'Qualitative research studies' = "Qualitative research",
+            'Qualitative research studies' = "Qualitative research studies",
+            'Mixed methods studies' = "Mixed methods studies", 
+            'Patient-Reported Outcome Measures Studies' = "Patient-Reported Outcome Measures",
+            
+            'SIGN...SIGN.50 Critical Appraisal Tools' = "SIGN...SIGN.50 Critical Appraisal Tools",
+            'BMJ Critical Appraisal Tools' = "BMJ Critical Appraisal Tools",   
+            'CEBM Critical Appraisal Tools' = "CEBM Critical Appraisal Tools",  
+            'JBI Critical Appraisal Tools' = "JBI Critical Appraisal Tools", 
+           'Critical Appraisal of Clinical Practice Guidelines' = "Critical Appraisal of Clinical Practice Guidelines",
+           'Critical Appraisal of Systematic Reviews' = "Critical Appraisal of Systematic Reviews", 
+           'Diagnostic Accuracy Studies' = "Diagnostic Accuracy Studies",                          
+           'Economic Evaluation Studies' = "Economic evaluation",                                  
+           #'Health education and health behavior research studies' = "Health education and health behavior research studies",
+           'Medical education' = "Medical education",   
+           'No' = "Quality",
+           'No' = "No"))
+
+#### Unique Countries
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+unique_curated_dataset_and_tools<-unique_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,y=tool, fill=new_unitofanalysis, color=new_unitofanalysis, shape=measure, alpha=Freq_topics)) + 
+  geom_count(aes(x=Topics_general,y=tool, fill=new_unitofanalysis,  color=new_unitofanalysis,   shape=measure,alpha=Freq_topics))+
+  scale_shape(name = "Assessment objective")+
+  scale_shape_manual(values=c(24,21,22,25))+
+  coord_flip()+
+  theme(axis.text.y=element_text(angle=0, size=6))+
+  theme(axis.text.x=element_text(angle=90, size=6, hjust=1))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=tool, fill=unique_continent, color=unique_continent)) + 
+  geom_bar(aes(x=tool, fill=unique_continent,  color=unique_continent))+
+  scale_color_manual(values=c("#6495ED", "#FF3030", "#CDAA7D", "#FFD700", "#458B00"))+
+  scale_fill_manual(values=c("#6495ED", "#FF3030", "#CDAA7D", "#FFD700", "#458B00"))+
+  coord_flip()+
+  theme(axis.text.y=element_text(angle=0, size=6))+
+  theme(axis.text.x=element_text(angle=90, size=6, hjust=1))+
+  facet_wrap(~ALL_year)+
+  theme(legend.position="none")
+```
+
+```{r}
+#### Collaborative Countries
+#### no parece muy diferente al plot con unique!!!!  :-(
+collaborative_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  #filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+collaborative_curated_dataset_and_tools<-collaborative_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+ggplot(na.omit(collaborative_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,y=tool, fill=new_unitofanalysis, color=new_unitofanalysis, shape=measure, alpha=Freq_topics)) + 
+  geom_count(aes(x=Topics_general,y=tool, fill=new_unitofanalysis,  color=new_unitofanalysis,   shape=measure,alpha=Freq_topics))+
+  scale_shape(name = "Assessment objective")+
+  scale_shape_manual(values=c(24,21,22,25))+
+  coord_flip()+
+  theme(axis.text.y=element_text(angle=0, size=6))+
+  theme(axis.text.x=element_text(angle=90, size=6, hjust=1))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+```
+
+```{r TOPICS BY measure AND unit of analysis}
+#### barplots 
+#### topic X measure AND unitOfAnalisys
+#### UNIQUE COUNTRIES
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+unique_curated_dataset_and_tools<-unique_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+
+#### COLLABORATIVE COUNTRIES
+# unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+collaborative_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(str_detect(PROSPERO_country, ',')) %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+collaborative_curated_dataset_and_tools<-collaborative_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+ggplot(na.omit(collaborative_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics, drop = FALSE))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  coord_flip()+
+  scale_y_continuous(limits = c(0, 500))+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+```
+
+
+```{r}
+####  
+#### newunitOFanalysis X measure AND year
+#### UNIQUE COUNTRIES
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+unique_curated_dataset_and_tools<-unique_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=new_unitofanalysis,fill=measure, color=measure, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=new_unitofanalysis,fill=measure, color=measure, alpha=Freq_topics))+
+  # scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  # scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_color_manual(values=c(c("#66CDAA", "#6495ED", "#F08080")))+
+  scale_fill_manual(values=c("#66CDAA", "#6495ED", "#F08080"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(group~measure)+
+  theme(legend.position="none")
+
+unique_curated_dataset_and_tools$ALL_year<-as.factor(unique_curated_dataset_and_tools$ALL_year)
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=new_unitofanalysis,fill=ALL_year, color=ALL_year)) + 
+  geom_bar(stat='count', aes(x=new_unitofanalysis,fill=ALL_year, color=ALL_year))+
+  scale_color_manual(values=c("#C1FFC1", "#B4EEB4", "#9BCD9B", "#8FBC8F", "#698B69", "#6E8B3D", "#556B2F"))+
+  scale_fill_manual(values=c("#C1FFC1", "#B4EEB4", "#9BCD9B", "#8FBC8F", "#698B69", "#6E8B3D", "#556B2F"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+```
+
+```{r unit of analysis BY measure AND YEAR}
+#### barplots 
+#### topic X measure AND unitOfAnalisys
+#### UNIQUE COUNTRIES
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+unique_curated_dataset_and_tools<-unique_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=as.factor(ALL_year),fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=as.factor(ALL_year),fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  #coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=6))+
+  scale_x_discrete(labels = c("2011", "2012", "2013", "2014", "2015", "2016", "2017"))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+
+#### COLLABORATIVE COUNTRIES
+# unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+collaborative_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(str_detect(PROSPERO_country, ',')) %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+collaborative_curated_dataset_and_tools<-collaborative_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+
+ggplot(na.omit(collaborative_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=as.factor(ALL_year),fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=as.factor(ALL_year),fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  #coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=6))+
+  scale_x_discrete(labels = c("2011", "2012", "2013", "2014", "2015", "2016", "2017"))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+```
+
+```{r unit of analysis BY measure AND group}
+#### barplots 
+#### topic X measure AND unitOfAnalisys
+#### UNIQUE COUNTRIES
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+unique_curated_dataset_and_tools<-unique_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=measure,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=measure,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  #coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=6))+
+  facet_wrap(~group)+
+  theme(legend.position="none")
+
+
+#### COLLABORATIVE COUNTRIES
+# unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+collaborative_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(str_detect(PROSPERO_country, ',')) %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="BMJ Critical Appraisal Tools") %>%
+  filter(., measure!="CEBM Critical Appraisal Tools") %>%
+  filter(., measure!="JBI Critical Appraisal Tools") %>%
+  filter(., measure!="SIGN...SIGN.50 Critical Appraisal Tools")
+
+collaborative_curated_dataset_and_tools<-collaborative_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "Critical Appraisal of Clinical Practice Guidelines", "Critical Appraisal of Systematic Reviews", "Diagnostic Accuracy Studies","Economic Evaluation Studies","Health education and health behavior research studies", "RCTs", "Non-RCTs and Observational Studies", "RCTs and Observational Studies", "Quantitative Research (Public Health Research)", "Qualitative research studies", "Patient-Reported Outcome Measures Studies", "Mixed methods studies", "Medical education","BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools"))
+
+
+ggplot(na.omit(collaborative_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=as.factor(ALL_year),fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=as.factor(ALL_year),fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  #coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=6))+
+  scale_x_discrete(labels = c("2011", "2012", "2013", "2014", "2015", "2016", "2017"))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+```
+
+```{r}
+#### UNIQUE
+#### barplots Critical Appraisal Tools
+unique_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(., unique_country=="unique") %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="No") %>%
+  filter(., measure!="Reporting") %>%
+  filter(., measure!="Quality") %>%
+  filter(., measure!="RoB") %>%
+  filter(., (measure=="BMJ Critical Appraisal Tools" | measure=="CEBM Critical Appraisal Tools" |measure=="JBI Critical Appraisal Tools" |measure=="SIGN...SIGN.50 Critical Appraisal Tools" ))
+
+unique_curated_dataset_and_tools<-unique_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools")
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~measure)+
+  theme(legend.position="none")
+
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,fill=measure, color=measure, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=Topics_general,fill=measure, color=measure, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~unique_continent)+
+  theme(legend.position="none")
+```
+
+
+```{r}
+#### COLLABORATIVE
+#### barplots Critical Appraisal Tools
+collaborative_curated_dataset_and_tools<-curated_dataset_and_tools %>% 
+  filter(str_detect(PROSPERO_country, ',')) %>%
+  filter(., tool!="No") %>%
+  filter(., new_unitofanalysis!="No") %>%
+  filter(., measure!="Diagnostic Accuracy") %>%
+  filter(., measure!="No") %>%
+  filter(., measure!="Reporting") %>%
+  filter(., measure!="Quality") %>%
+  filter(., measure!="RoB") %>%
+  filter(., (measure=="BMJ Critical Appraisal Tools" | measure=="CEBM Critical Appraisal Tools" |measure=="JBI Critical Appraisal Tools" |measure=="SIGN...SIGN.50 Critical Appraisal Tools" ))
+
+collaborative_curated_dataset_and_tools<-collaborative_curated_dataset_and_tools %>%
+  mutate(new_unitofanalysis = fct_relevel(new_unitofanalysis, "BMJ Critical Appraisal Tools" ,"CEBM Critical Appraisal Tools","JBI Critical Appraisal Tools","SIGN...SIGN.50 Critical Appraisal Tools")
+
+ggplot(na.omit(collaborative_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=Topics_general,fill=new_unitofanalysis, color=new_unitofanalysis, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~unique_continent)+
+  theme(legend.position="none")
+
+
+ggplot(na.omit(unique_curated_dataset_and_tools[,c(1,3:6,13,14,21,24,25)]),aes(x=Topics_general,fill=measure, color=measure, alpha=Freq_topics)) + 
+  geom_bar(stat='count', aes(x=Topics_general,fill=measure, color=measure, alpha=Freq_topics))+
+  scale_color_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  scale_fill_manual(values=c("#838B8B", "#C1CDCD", "#F0E68C", "#FF8C00", "#1874CD", "#00BFFF", "#458B74", "#66CDAA", "#B4EEB4", "#8B7355", "#CDAA7D", "#FFD39B", "#F5F5DC"))+
+  coord_flip()+
+  theme(axis.text.x=element_text(size=6))+
+  theme(axis.text.y=element_text(size=10))+
+  facet_wrap(~unique_continent)+
+  theme(legend.position="none")
+```
+
+```{r}
+names(dataset_PROSPERO2_final)
+unique_curated_dataset<-curated_dataset %>% 
+  filter(., unique_country=="unique")
+ggplot(na.omit(unique_curated_dataset[,c(4,12,70,71)]),aes(x=Topics_general,fill=AMSTAR)) + 
+  geom_bar(stat='count',aes(x=Topics_general,fill=AMSTAR))+
+  coord_flip()+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~unique_continent)+
+  theme(legend.position="none")
+```
+
+```{r}
+####  PLOTS
+# library("gghighlight")
+curated_dataset_order <- as.data.frame(table(curated_dataset[,c(4)]))
+curated_dataset_order_final<-merge(curated_dataset, curated_dataset_order, by.x="Topics_general", by.y = "Var1", all.x = TRUE)
+curated_dataset_order_final<-arrange(curated_dataset_order_final,desc(Freq))
+final_order<-curated_dataset_order_final[order(curated_dataset_order_final$Freq),c(1,64,72)]
+newdata <- curated_dataset_order_final[order(-curated_dataset_order_final$Freq),] 
+
+ggplot(na.omit(newdata),aes(x=ALL_year,color=Topics_general)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=Topics_general))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~Topics_general)+
+  theme(legend.position="none")+
+  xlab("Year") +
+  ylab("nº protocols")+
+  scale_x_continuous(limits=c(2011, 2017), breaks = c(2011,2012,2013,2014,2015,2016,2017))
+
+  # scale_x_continuous(limits=c(2011, 2017), breaks = c(2011,2012,2013,2014,2015,2016,2017))+
+  # xlab("Year") +
+  # ylab("nº protocols")+
+  # ggtitle("SRs protocols by journal")
+
+ggplot(curated_dataset,aes(x=ALL_year,color=methodological.quality)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=methodological.quality))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~methodological.quality)+
+  theme(legend.position="none")+
+  xlab("Year") +
+  ylab("nº protocols")
+
+ggplot(curated_dataset,aes(x=ALL_year,color=quality.of.studies)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=quality.of.studies))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~quality.of.studies)+
+  theme(legend.position="none")
+
+ggplot(curated_dataset,aes(x=ALL_year,color=risk.of.bias)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=risk.of.bias))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~risk.of.bias)+
+  theme(legend.position="none")
+
+ggplot(curated_dataset,aes(x=ALL_year,color=two_reviewers_OR_two_authors)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=two_reviewers_OR_two_authors))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~two_reviewers_OR_two_authors)+
+  theme(legend.position="none")
+
+ggplot(curated_dataset,aes(x=ALL_year,color=RoB_field_information)) + 
+  geom_point(stat = 'count') +
+  geom_line(stat='count',aes(x=ALL_year,color=RoB_field_information))+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~RoB_field_information)+
+  theme(legend.position="none")
+
+unique_curated_dataset<-curated_dataset %>% filter(., unique_country=="unique")
+ggplot(unique_curated_dataset,aes(x=Topics_general,color=PROSPERO_country)) + 
+  geom_bar(stat='count',aes(x=Topics_general,color=PROSPERO_country))+
+  coord_flip()+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~PROSPERO_country)+
+  theme(legend.position="none")
+
+###  topics BY countries colored BY continent
+unique_curated_dataset<-curated_dataset %>% filter(., unique_country=="unique")
+ggplot(unique_curated_dataset,aes(x=Topics_general,color=unique_continent)) + 
+  geom_bar(stat='count',aes(x=Topics_general,color=unique_continent))+
+  coord_flip()+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~PROSPERO_country)+
+  theme(legend.position="none")
+
+
+###  topics BY continent colored BY continent
+unique_curated_dataset<-curated_dataset %>% 
+  filter(., unique_country=="unique")
+ggplot(na.omit(unique_curated_dataset[,c(4,70,71)]),aes(x=Topics_general,color=unique_continent)) + 
+  geom_bar(stat='count',aes(x=Topics_general,color=unique_continent))+
+  coord_flip()+
+  theme(axis.text.y=element_text(size=4))+
+  facet_wrap(~unique_continent)+
+  theme(legend.position="none")
+```
+
+```{r}
+### rank comare between continents
+my_theme <- function() {
+  
+  # Colors
+  color.background = "white"
+  color.text = "#22211d"
+  
+  # Begin construction of chart
+  theme_bw(base_size=15) +
+    
+    # Format background colors
+    theme(panel.background = element_rect(fill=color.background, color=color.background)) +
+    theme(plot.background  = element_rect(fill=color.background, color=color.background)) +
+    theme(panel.border     = element_rect(color=color.background)) +
+    theme(strip.background = element_rect(fill=color.background, color=color.background)) +
+    
+    # Format the grid
+    theme(panel.grid.major.y = element_blank()) +
+    theme(panel.grid.minor.y = element_blank()) +
+    theme(axis.ticks       = element_blank()) +
+    
+    # Format the legend
+    theme(legend.position = "none") +
+    
+    # Format title and axis labels
+    theme(plot.title       = element_text(color=color.text, size=20, face = "bold")) +
+    theme(axis.title.x     = element_text(size=14, color="black", face = "bold")) +
+    theme(axis.title.y     = element_text(size=14, color="black", face = "bold", vjust=1.25)) +
+    theme(axis.text.x      = element_text(size=10, vjust=0.5, hjust=0.5, color = color.text)) +
+    theme(axis.text.y      = element_text(size=10, color = color.text)) +
+    theme(strip.text       = element_text(face = "bold")) +
+    
+    # Plot margins
+    theme(plot.margin = unit(c(0.35, 0.2, 0.3, 0.35), "cm"))
+}
+labels<-as.vector(levels(rank_data$disease))
+rank_compare<-read.csv2(file="rank_compare.csv")
+rank_data <- rank_compare %>% gather(continent,Rank,-disease)
+ggplotColors <- function(g){
+  d <- 360/g
+  h <- cumsum(c(15, rep(d,g - 1)))
+  hcl(h = h, c = 100, l = 65)
+}
+
+```
+
+```{r}
+
+#grep("blue",colors())
+#  TOP10 Europe 
+ggplot(data = rank_data, aes(x = continent, y = Rank, group = disease)) +
+  geom_line(aes(color = disease, alpha = 1), size = 1) +
+  geom_point(aes(color = disease, alpha = 1), size = 2) +
+  scale_colour_manual(values = c(8,2,2,8,8,8,8,2,8,8,8,2,8,8,8,2,8,8,2,8,8,8,2,8,8,2,8,8,2,8,8,8,8,2,8))+
+  scale_x_discrete(expand = c(0.85,0), limits = c("Europe","America","Asia","South.Asia.and.Oceania","Africa"))+
+  scale_y_reverse(breaks = 1:35)+
+  theme(legend.position = "none") +
+  labs(x = "",
+       y = "",
+       title = "protocols for SRs by topic \ncomparing rankings by continent") +
+  my_theme() + 
+  geom_text(data =rank_data,aes(y=Rank,x=0.6,label=c(""),hjust="right"))
+```
+
+```{r}
+
+#  TOP10 America
+ggplot(data = rank_data, aes(x = continent, y = Rank, group = disease)) +
+  geom_line(aes(color = disease, alpha = 1), size = 1) +
+  geom_point(aes(color = disease, alpha = 1), size = 2) +
+  scale_colour_manual(values = c(8,1,1,8,8,8,8,1,8,8,8,1,8,8,8,1,8,8,1,8,4,8,1,8,8,1,8,8,1,8,8,8,8,1,8))+
+  scale_x_discrete(expand = c(0.85,0), limits = c("Europe","America","Asia","South.Asia.and.Oceania","Africa"))+
+  scale_y_reverse(breaks = 1:35)+
+  theme(legend.position = "none") +
+  labs(x = "",
+       y = "",
+       title = "protocols for SRs by topic \ncomparing rankings by continent") +
+  my_theme() + 
+  geom_text(data =rank_data,aes(y=Rank,x=0.6,label=c(""),hjust="right"))
+```
+
+```{r}
+
+#  TOP10 Asia
+ggplot(data = rank_data, aes(x = continent, y = Rank, group = disease)) +
+  geom_line(aes(color = disease, alpha = 1), size = 1) +
+  geom_point(aes(color = disease, alpha = 1), size = 2) +
+  scale_colour_manual(values = c(3,1,1,8,8,8,8,1,8,8,8,1,8,8,8,1,8,3,1,8,3,8,1,8,8,1,8,8,1,8,8,8,8,1,8))+
+  scale_x_discrete(expand = c(0.85,0), limits = c("Europe","America","Asia","South.Asia.and.Oceania","Africa"))+
+  scale_y_reverse(breaks = 1:35)+
+  theme(legend.position = "none") +
+  labs(x = "",
+       y = "",
+       title = "protocols for SRs by topic \ncomparing rankings by continent") +
+  my_theme() + 
+  geom_text(data =rank_data,aes(y=Rank,x=0.6,label=c(""),hjust="right"))
+
+```
+
+```{r}
+
+#  TOP10 Oceania
+ggplot(data = rank_data, aes(x = continent, y = Rank, group = disease)) +
+  geom_line(aes(color = disease, alpha = 1), size = 1) +
+  geom_point(aes(color = disease, alpha = 1), size = 2) +
+  scale_colour_manual(values = c(8,1,1,8,8,8,8,1,8,8,8,1,8,8,8,1,8,8,1,8,8,8,1,8,8,1,8,8,1,8,8,8,8,1,8))+
+  scale_x_discrete(expand = c(0.85,0), limits = c("Europe","America","Asia","South.Asia.and.Oceania","Africa"))+
+  scale_y_reverse(breaks = 1:35)+
+  theme(legend.position = "none") +
+  labs(x = "",
+       y = "",
+       title = "protocols for SRs by topic \ncomparing rankings by continent") +
+  my_theme() + 
+  geom_text(data =rank_data,aes(y=Rank,x=0.6,label=c(""),hjust="right"))
+```
+
+```{r}
+#  TOP10 Africa
+ggplot(data = rank_data, aes(x = continent, y = Rank, group = disease)) +
+  geom_line(aes(color = disease, alpha = 1), size = 1) +
+  geom_point(aes(color = disease, alpha = 1), size = 2) +
+  scale_colour_manual(values = c(8,1,1,8,8,8,8,1,8,8,8,1,8,8,8,1,8,8,1,8,15,8,1,8,8,1,8,8,1,8,8,8,8,1,8))+
+  scale_x_discrete(expand = c(0.85,0), limits = c("Europe","America","Asia","South.Asia.and.Oceania","Africa"))+
+  scale_y_reverse(breaks = 1:35)+
+  theme(legend.position = "none") +
+  labs(x = "",
+       y = "",
+       title = "protocols for SRs by topic \ncomparing rankings by continent") +
+  my_theme() + 
+  geom_text(data =rank_data,aes(y=Rank,x=0.6,label=c(""),hjust="right"))
+```
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
